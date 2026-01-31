@@ -1,0 +1,1716 @@
+{
+  "version": 4,
+  "terraform_version": "1.14.3",
+  "serial": 44,
+  "lineage": "6d4f2129-ed4e-70ed-7f45-5f43e5dbdf98",
+  "outputs": {
+    "alb_dns_name": {
+      "value": "conversations-alb-1446170901.ap-south-1.elb.amazonaws.com",
+      "type": "string"
+    },
+    "alb_url": {
+      "value": "http://conversations-alb-1446170901.ap-south-1.elb.amazonaws.com",
+      "type": "string"
+    },
+    "cloudwatch_log_group": {
+      "value": "/ecs/conversations",
+      "type": "string"
+    },
+    "ecr_repository_url": {
+      "value": "015932244669.dkr.ecr.ap-south-1.amazonaws.com/conversations",
+      "type": "string"
+    },
+    "ecs_cluster_name": {
+      "value": "conversations-cluster",
+      "type": "string"
+    },
+    "ecs_service_name": {
+      "value": "conversations-service",
+      "type": "string"
+    },
+    "rds_database_name": {
+      "value": "conversationsdb",
+      "type": "string"
+    },
+    "rds_endpoint": {
+      "value": "conversations-db.c9660202ctgy.ap-south-1.rds.amazonaws.com:3306",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "aws_availability_zones",
+      "name": "available",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "all_availability_zones": null,
+            "exclude_names": null,
+            "exclude_zone_ids": null,
+            "filter": null,
+            "group_names": [
+              "ap-south-1-zg-1"
+            ],
+            "id": "ap-south-1",
+            "names": [
+              "ap-south-1a",
+              "ap-south-1b",
+              "ap-south-1c"
+            ],
+            "state": "available",
+            "timeouts": null,
+            "zone_ids": [
+              "aps1-az1",
+              "aps1-az3",
+              "aps1-az2"
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_appautoscaling_target",
+      "name": "ecs_target",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "status": "tainted",
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:application-autoscaling:ap-south-1:015932244669:scalable-target/0ec54bbe1842aa9c487a882e51b40251ac2d",
+            "id": "service/conversations-cluster/conversations-service",
+            "max_capacity": 2,
+            "min_capacity": 1,
+            "resource_id": "service/conversations-cluster/conversations-service",
+            "role_arn": "arn:aws:iam::015932244669:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService",
+            "scalable_dimension": "ecs:service:DesiredCount",
+            "service_namespace": "ecs",
+            "suspended_state": [
+              {
+                "dynamic_scaling_in_suspended": false,
+                "dynamic_scaling_out_suspended": false,
+                "scheduled_scaling_suspended": false
+              }
+            ],
+            "tags": null,
+            "tags_all": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_cloudwatch_log_group.ecs",
+            "aws_db_instance.mysql",
+            "aws_db_subnet_group.main",
+            "aws_ecr_repository.app",
+            "aws_ecs_cluster.main",
+            "aws_ecs_service.app",
+            "aws_ecs_task_definition.app",
+            "aws_iam_role.ecs_task_execution_role",
+            "aws_iam_role.ecs_task_role",
+            "aws_lb.main",
+            "aws_lb_listener.app",
+            "aws_lb_target_group.app",
+            "aws_security_group.alb",
+            "aws_security_group.ecs",
+            "aws_security_group.rds",
+            "aws_subnet.private",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "ecs",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:logs:ap-south-1:015932244669:log-group:/ecs/conversations",
+            "id": "/ecs/conversations",
+            "kms_key_id": "",
+            "log_group_class": "STANDARD",
+            "name": "/ecs/conversations",
+            "name_prefix": "",
+            "retention_in_days": 7,
+            "skip_destroy": false,
+            "tags": {
+              "Name": "conversations-logs"
+            },
+            "tags_all": {
+              "Name": "conversations-logs"
+            }
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "name": "mysql",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 2,
+          "attributes": {
+            "address": "conversations-db.c9660202ctgy.ap-south-1.rds.amazonaws.com",
+            "allocated_storage": 20,
+            "allow_major_version_upgrade": null,
+            "apply_immediately": false,
+            "arn": "arn:aws:rds:ap-south-1:015932244669:db:conversations-db",
+            "auto_minor_version_upgrade": true,
+            "availability_zone": "ap-south-1a",
+            "backup_retention_period": 1,
+            "backup_target": "region",
+            "backup_window": "21:05-21:35",
+            "blue_green_update": [],
+            "ca_cert_identifier": "rds-ca-rsa2048-g1",
+            "character_set_name": "",
+            "copy_tags_to_snapshot": false,
+            "custom_iam_instance_profile": "",
+            "customer_owned_ip_enabled": false,
+            "database_insights_mode": "standard",
+            "db_name": "conversationsdb",
+            "db_subnet_group_name": "conversations-db-subnet-group",
+            "dedicated_log_volume": false,
+            "delete_automated_backups": true,
+            "deletion_protection": false,
+            "domain": "",
+            "domain_auth_secret_arn": "",
+            "domain_dns_ips": null,
+            "domain_fqdn": "",
+            "domain_iam_role_name": "",
+            "domain_ou": "",
+            "enabled_cloudwatch_logs_exports": null,
+            "endpoint": "conversations-db.c9660202ctgy.ap-south-1.rds.amazonaws.com:3306",
+            "engine": "mysql",
+            "engine_lifecycle_support": "open-source-rds-extended-support",
+            "engine_version": "8.0",
+            "engine_version_actual": "8.0.44",
+            "final_snapshot_identifier": "conversations-db-final-snapshot",
+            "hosted_zone_id": "Z2VFMSZA74J7XZ",
+            "iam_database_authentication_enabled": false,
+            "id": "db-NKBUWSSEDXUOD4WCIPNFD4OEM4",
+            "identifier": "conversations-db",
+            "identifier_prefix": "",
+            "instance_class": "db.t3.micro",
+            "iops": 3000,
+            "kms_key_id": "arn:aws:kms:ap-south-1:015932244669:key/99662bcc-7a98-4e1a-906a-327c8a2d6464",
+            "latest_restorable_time": "2026-01-27T14:50:13Z",
+            "license_model": "general-public-license",
+            "listener_endpoint": [],
+            "maintenance_window": "tue:12:41-tue:13:11",
+            "manage_master_user_password": null,
+            "master_user_secret": [],
+            "master_user_secret_kms_key_id": null,
+            "max_allocated_storage": 0,
+            "monitoring_interval": 0,
+            "monitoring_role_arn": "",
+            "multi_az": true,
+            "nchar_character_set_name": "",
+            "network_type": "IPV4",
+            "option_group_name": "default:mysql-8-0",
+            "parameter_group_name": "default.mysql8.0",
+            "password": "ConversationsApp2024!",
+            "password_wo": null,
+            "password_wo_version": null,
+            "performance_insights_enabled": false,
+            "performance_insights_kms_key_id": "",
+            "performance_insights_retention_period": 0,
+            "port": 3306,
+            "publicly_accessible": false,
+            "replica_mode": "",
+            "replicas": [],
+            "replicate_source_db": "",
+            "resource_id": "db-NKBUWSSEDXUOD4WCIPNFD4OEM4",
+            "restore_to_point_in_time": [],
+            "s3_import": [],
+            "skip_final_snapshot": false,
+            "snapshot_identifier": null,
+            "status": "available",
+            "storage_encrypted": true,
+            "storage_throughput": 125,
+            "storage_type": "gp3",
+            "tags": {
+              "Name": "conversations-mysql-db"
+            },
+            "tags_all": {
+              "Name": "conversations-mysql-db"
+            },
+            "timeouts": null,
+            "timezone": "",
+            "upgrade_storage_config": null,
+            "username": "admin",
+            "vpc_security_group_ids": [
+              "sg-0b0f44357274d483e"
+            ]
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "password"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "password_wo"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "username"
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInVwZGF0ZSI6NDgwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMiJ9",
+          "dependencies": [
+            "aws_db_subnet_group.main",
+            "aws_security_group.alb",
+            "aws_security_group.ecs",
+            "aws_security_group.rds",
+            "aws_subnet.private",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_db_subnet_group",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:rds:ap-south-1:015932244669:subgrp:conversations-db-subnet-group",
+            "description": "Managed by Terraform",
+            "id": "conversations-db-subnet-group",
+            "name": "conversations-db-subnet-group",
+            "name_prefix": "",
+            "subnet_ids": [
+              "subnet-0718bdaf0d38f514d",
+              "subnet-0e058662623b6cdf6"
+            ],
+            "supported_network_types": [
+              "IPV4"
+            ],
+            "tags": {
+              "Name": "conversations-db-subnet-group"
+            },
+            "tags_all": {
+              "Name": "conversations-db-subnet-group"
+            },
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_subnet.private",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_ecr_repository",
+      "name": "app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:ecr:ap-south-1:015932244669:repository/conversations",
+            "encryption_configuration": [
+              {
+                "encryption_type": "AES256",
+                "kms_key": ""
+              }
+            ],
+            "force_delete": null,
+            "id": "conversations",
+            "image_scanning_configuration": [
+              {
+                "scan_on_push": true
+              }
+            ],
+            "image_tag_mutability": "MUTABLE",
+            "name": "conversations",
+            "registry_id": "015932244669",
+            "repository_url": "015932244669.dkr.ecr.ap-south-1.amazonaws.com/conversations",
+            "tags": {
+              "Name": "conversations-ecr"
+            },
+            "tags_all": {
+              "Name": "conversations-ecr"
+            },
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiZGVsZXRlIjoxMjAwMDAwMDAwMDAwfX0="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_ecs_cluster",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:ecs:ap-south-1:015932244669:cluster/conversations-cluster",
+            "configuration": [],
+            "id": "arn:aws:ecs:ap-south-1:015932244669:cluster/conversations-cluster",
+            "name": "conversations-cluster",
+            "service_connect_defaults": [],
+            "setting": [
+              {
+                "name": "containerInsights",
+                "value": "enabled"
+              }
+            ],
+            "tags": {
+              "Name": "conversations-cluster"
+            },
+            "tags_all": {
+              "Name": "conversations-cluster"
+            }
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_ecs_cluster_capacity_providers",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "capacity_providers": [
+              "FARGATE",
+              "FARGATE_SPOT"
+            ],
+            "cluster_name": "conversations-cluster",
+            "default_capacity_provider_strategy": [
+              {
+                "base": 1,
+                "capacity_provider": "FARGATE",
+                "weight": 100
+              }
+            ],
+            "id": "conversations-cluster"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_ecs_cluster.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "alarms": [],
+            "availability_zone_rebalancing": "DISABLED",
+            "capacity_provider_strategy": [],
+            "cluster": "arn:aws:ecs:ap-south-1:015932244669:cluster/conversations-cluster",
+            "deployment_circuit_breaker": [
+              {
+                "enable": false,
+                "rollback": false
+              }
+            ],
+            "deployment_controller": [
+              {
+                "type": "ECS"
+              }
+            ],
+            "deployment_maximum_percent": 200,
+            "deployment_minimum_healthy_percent": 100,
+            "desired_count": 1,
+            "enable_ecs_managed_tags": false,
+            "enable_execute_command": false,
+            "force_delete": null,
+            "force_new_deployment": null,
+            "health_check_grace_period_seconds": 0,
+            "iam_role": "/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+            "id": "arn:aws:ecs:ap-south-1:015932244669:service/conversations-cluster/conversations-service",
+            "launch_type": "FARGATE",
+            "load_balancer": [
+              {
+                "container_name": "conversations",
+                "container_port": 8080,
+                "elb_name": "",
+                "target_group_arn": "arn:aws:elasticloadbalancing:ap-south-1:015932244669:targetgroup/conversations-tg/73569b355e4c8cb2"
+              }
+            ],
+            "name": "conversations-service",
+            "network_configuration": [
+              {
+                "assign_public_ip": false,
+                "security_groups": [
+                  "sg-05e23d2e071fdc5fe"
+                ],
+                "subnets": [
+                  "subnet-0718bdaf0d38f514d",
+                  "subnet-0e058662623b6cdf6"
+                ]
+              }
+            ],
+            "ordered_placement_strategy": [],
+            "placement_constraints": [],
+            "platform_version": "LATEST",
+            "propagate_tags": "NONE",
+            "scheduling_strategy": "REPLICA",
+            "service_connect_configuration": [],
+            "service_registries": [],
+            "tags": {
+              "Name": "conversations-service"
+            },
+            "tags_all": {
+              "Name": "conversations-service"
+            },
+            "task_definition": "arn:aws:ecs:ap-south-1:015932244669:task-definition/conversations:1",
+            "timeouts": null,
+            "triggers": {},
+            "volume_configuration": [],
+            "vpc_lattice_configurations": [],
+            "wait_for_steady_state": false
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "aws_cloudwatch_log_group.ecs",
+            "aws_db_instance.mysql",
+            "aws_db_subnet_group.main",
+            "aws_ecr_repository.app",
+            "aws_ecs_cluster.main",
+            "aws_ecs_task_definition.app",
+            "aws_iam_role.ecs_task_execution_role",
+            "aws_iam_role.ecs_task_role",
+            "aws_lb.main",
+            "aws_lb_listener.app",
+            "aws_lb_target_group.app",
+            "aws_security_group.alb",
+            "aws_security_group.ecs",
+            "aws_security_group.rds",
+            "aws_subnet.private",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_ecs_task_definition",
+      "name": "app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ecs:ap-south-1:015932244669:task-definition/conversations:1",
+            "arn_without_revision": "arn:aws:ecs:ap-south-1:015932244669:task-definition/conversations",
+            "container_definitions": "[{\"environment\":[{\"name\":\"SPRING_DATASOURCE_PASSWORD\",\"value\":\"ConversationsApp2024!\"},{\"name\":\"SPRING_DATASOURCE_URL\",\"value\":\"jdbc:mysql://conversations-db.c9660202ctgy.ap-south-1.rds.amazonaws.com:3306/conversationsdb\"},{\"name\":\"SPRING_DATASOURCE_USERNAME\",\"value\":\"admin\"},{\"name\":\"SPRING_JPA_HIBERNATE_DDL_AUTO\",\"value\":\"update\"}],\"essential\":true,\"image\":\"015932244669.dkr.ecr.ap-south-1.amazonaws.com/conversations:latest\",\"logConfiguration\":{\"logDriver\":\"awslogs\",\"options\":{\"awslogs-group\":\"/ecs/conversations\",\"awslogs-region\":\"ap-south-1\",\"awslogs-stream-prefix\":\"ecs\"}},\"mountPoints\":[],\"name\":\"conversations\",\"portMappings\":[{\"containerPort\":8080,\"hostPort\":8080,\"protocol\":\"tcp\"}],\"systemControls\":[],\"volumesFrom\":[]}]",
+            "cpu": "256",
+            "enable_fault_injection": false,
+            "ephemeral_storage": [],
+            "execution_role_arn": "arn:aws:iam::015932244669:role/conversations-ecs-task-execution-role",
+            "family": "conversations",
+            "id": "conversations",
+            "inference_accelerator": [],
+            "ipc_mode": "",
+            "memory": "512",
+            "network_mode": "awsvpc",
+            "pid_mode": "",
+            "placement_constraints": [],
+            "proxy_configuration": [],
+            "requires_compatibilities": [
+              "FARGATE"
+            ],
+            "revision": 1,
+            "runtime_platform": [],
+            "skip_destroy": false,
+            "tags": {
+              "Name": "conversations-task-def"
+            },
+            "tags_all": {
+              "Name": "conversations-task-def"
+            },
+            "task_role_arn": "arn:aws:iam::015932244669:role/conversations-ecs-task-role",
+            "track_latest": false,
+            "volume": []
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "container_definitions"
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "aws_cloudwatch_log_group.ecs",
+            "aws_db_instance.mysql",
+            "aws_db_subnet_group.main",
+            "aws_ecr_repository.app",
+            "aws_iam_role.ecs_task_execution_role",
+            "aws_iam_role.ecs_task_role",
+            "aws_security_group.alb",
+            "aws_security_group.ecs",
+            "aws_security_group.rds",
+            "aws_subnet.private",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_eip",
+      "name": "nat",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "address": null,
+            "allocation_id": "eipalloc-08829fcaaf62e5e1b",
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:elastic-ip/eipalloc-08829fcaaf62e5e1b",
+            "associate_with_private_ip": null,
+            "association_id": "eipassoc-0a6ec1bb601c21752",
+            "carrier_ip": "",
+            "customer_owned_ip": "",
+            "customer_owned_ipv4_pool": "",
+            "domain": "vpc",
+            "id": "eipalloc-08829fcaaf62e5e1b",
+            "instance": "",
+            "ipam_pool_id": null,
+            "network_border_group": "ap-south-1",
+            "network_interface": "eni-0e6ccb7fde48c3e70",
+            "private_dns": "ip-10-0-1-170.ap-south-1.compute.internal",
+            "private_ip": "10.0.1.170",
+            "ptr_record": "",
+            "public_dns": "ec2-3-111-255-3.ap-south-1.compute.amazonaws.com",
+            "public_ip": "3.111.255.3",
+            "public_ipv4_pool": "amazon",
+            "tags": {
+              "Name": "conversations-eip"
+            },
+            "tags_all": {
+              "Name": "conversations-eip"
+            },
+            "timeouts": null,
+            "vpc": true
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiZGVsZXRlIjoxODAwMDAwMDAwMDAsInJlYWQiOjkwMDAwMDAwMDAwMCwidXBkYXRlIjozMDAwMDAwMDAwMDB9fQ==",
+          "dependencies": [
+            "aws_internet_gateway.main",
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "ecs_task_execution_role",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::015932244669:role/conversations-ecs-task-execution-role",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ecs-tasks.amazonaws.com\"}}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2026-01-27T14:29:46Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "conversations-ecs-task-execution-role",
+            "inline_policy": [],
+            "managed_policy_arns": [
+              "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+            ],
+            "max_session_duration": 3600,
+            "name": "conversations-ecs-task-execution-role",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": "",
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AROAQHNNCYK677MFXW7WC"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "ecs_task_role",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::015932244669:role/conversations-ecs-task-role",
+            "assume_role_policy": "{\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ecs-tasks.amazonaws.com\"}}],\"Version\":\"2012-10-17\"}",
+            "create_date": "2026-01-27T14:29:46Z",
+            "description": "",
+            "force_detach_policies": false,
+            "id": "conversations-ecs-task-role",
+            "inline_policy": [],
+            "managed_policy_arns": [],
+            "max_session_duration": 3600,
+            "name": "conversations-ecs-task-role",
+            "name_prefix": "",
+            "path": "/",
+            "permissions_boundary": "",
+            "tags": {},
+            "tags_all": {},
+            "unique_id": "AROAQHNNCYK6UH65NLKX6"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_role_policy_attachment",
+      "name": "ecs_task_execution_role_policy",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "conversations-ecs-task-execution-role-20260127142948442900000001",
+            "policy_arn": "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+            "role": "conversations-ecs-task-execution-role"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_iam_role.ecs_task_execution_role"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_internet_gateway",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:internet-gateway/igw-04c614d183aa8bcbc",
+            "id": "igw-04c614d183aa8bcbc",
+            "owner_id": "015932244669",
+            "tags": {
+              "Name": "conversations-igw"
+            },
+            "tags_all": {
+              "Name": "conversations-igw"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_lb",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "access_logs": [
+              {
+                "bucket": "",
+                "enabled": false,
+                "prefix": ""
+              }
+            ],
+            "arn": "arn:aws:elasticloadbalancing:ap-south-1:015932244669:loadbalancer/app/conversations-alb/b986dbbb8088f616",
+            "arn_suffix": "app/conversations-alb/b986dbbb8088f616",
+            "client_keep_alive": 3600,
+            "connection_logs": [
+              {
+                "bucket": "",
+                "enabled": false,
+                "prefix": ""
+              }
+            ],
+            "customer_owned_ipv4_pool": "",
+            "desync_mitigation_mode": "defensive",
+            "dns_name": "conversations-alb-1446170901.ap-south-1.elb.amazonaws.com",
+            "dns_record_client_routing_policy": null,
+            "drop_invalid_header_fields": false,
+            "enable_cross_zone_load_balancing": true,
+            "enable_deletion_protection": false,
+            "enable_http2": true,
+            "enable_tls_version_and_cipher_suite_headers": false,
+            "enable_waf_fail_open": false,
+            "enable_xff_client_port": false,
+            "enable_zonal_shift": false,
+            "enforce_security_group_inbound_rules_on_private_link_traffic": "",
+            "id": "arn:aws:elasticloadbalancing:ap-south-1:015932244669:loadbalancer/app/conversations-alb/b986dbbb8088f616",
+            "idle_timeout": 60,
+            "internal": false,
+            "ip_address_type": "ipv4",
+            "ipam_pools": [],
+            "load_balancer_type": "application",
+            "minimum_load_balancer_capacity": [],
+            "name": "conversations-alb",
+            "name_prefix": "",
+            "preserve_host_header": false,
+            "security_groups": [
+              "sg-04a2ee8f0e0fd304e"
+            ],
+            "subnet_mapping": [
+              {
+                "allocation_id": "",
+                "ipv6_address": "",
+                "outpost_id": "",
+                "private_ipv4_address": "",
+                "subnet_id": "subnet-01d9f18fdcdb9dab5"
+              },
+              {
+                "allocation_id": "",
+                "ipv6_address": "",
+                "outpost_id": "",
+                "private_ipv4_address": "",
+                "subnet_id": "subnet-021dcfbd46deec846"
+              }
+            ],
+            "subnets": [
+              "subnet-01d9f18fdcdb9dab5",
+              "subnet-021dcfbd46deec846"
+            ],
+            "tags": {
+              "Name": "conversations-alb"
+            },
+            "tags_all": {
+              "Name": "conversations-alb"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f",
+            "xff_header_processing_mode": "append",
+            "zone_id": "ZP97RAFLXTNZK"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6NjAwMDAwMDAwMDAwLCJ1cGRhdGUiOjYwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_security_group.alb",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_lb_listener",
+      "name": "app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "alpn_policy": null,
+            "arn": "arn:aws:elasticloadbalancing:ap-south-1:015932244669:listener/app/conversations-alb/b986dbbb8088f616/dd743b694523d266",
+            "certificate_arn": null,
+            "default_action": [
+              {
+                "authenticate_cognito": [],
+                "authenticate_oidc": [],
+                "fixed_response": [],
+                "forward": [],
+                "order": 1,
+                "redirect": [],
+                "target_group_arn": "arn:aws:elasticloadbalancing:ap-south-1:015932244669:targetgroup/conversations-tg/73569b355e4c8cb2",
+                "type": "forward"
+              }
+            ],
+            "id": "arn:aws:elasticloadbalancing:ap-south-1:015932244669:listener/app/conversations-alb/b986dbbb8088f616/dd743b694523d266",
+            "load_balancer_arn": "arn:aws:elasticloadbalancing:ap-south-1:015932244669:loadbalancer/app/conversations-alb/b986dbbb8088f616",
+            "mutual_authentication": [],
+            "port": 80,
+            "protocol": "HTTP",
+            "routing_http_request_x_amzn_mtls_clientcert_header_name": null,
+            "routing_http_request_x_amzn_mtls_clientcert_issuer_header_name": null,
+            "routing_http_request_x_amzn_mtls_clientcert_leaf_header_name": null,
+            "routing_http_request_x_amzn_mtls_clientcert_serial_number_header_name": null,
+            "routing_http_request_x_amzn_mtls_clientcert_subject_header_name": null,
+            "routing_http_request_x_amzn_mtls_clientcert_validity_header_name": null,
+            "routing_http_request_x_amzn_tls_cipher_suite_header_name": null,
+            "routing_http_request_x_amzn_tls_version_header_name": null,
+            "routing_http_response_access_control_allow_credentials_header_value": "",
+            "routing_http_response_access_control_allow_headers_header_value": "",
+            "routing_http_response_access_control_allow_methods_header_value": "",
+            "routing_http_response_access_control_allow_origin_header_value": "",
+            "routing_http_response_access_control_expose_headers_header_value": "",
+            "routing_http_response_access_control_max_age_header_value": "",
+            "routing_http_response_content_security_policy_header_value": "",
+            "routing_http_response_server_enabled": true,
+            "routing_http_response_strict_transport_security_header_value": "",
+            "routing_http_response_x_content_type_options_header_value": "",
+            "routing_http_response_x_frame_options_header_value": "",
+            "ssl_policy": "",
+            "tags": {},
+            "tags_all": {},
+            "tcp_idle_timeout_seconds": null,
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsInVwZGF0ZSI6MzAwMDAwMDAwMDAwfX0=",
+          "dependencies": [
+            "aws_lb.main",
+            "aws_lb_target_group.app",
+            "aws_security_group.alb",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_lb_target_group",
+      "name": "app",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:elasticloadbalancing:ap-south-1:015932244669:targetgroup/conversations-tg/73569b355e4c8cb2",
+            "arn_suffix": "targetgroup/conversations-tg/73569b355e4c8cb2",
+            "connection_termination": null,
+            "deregistration_delay": "300",
+            "health_check": [
+              {
+                "enabled": true,
+                "healthy_threshold": 3,
+                "interval": 30,
+                "matcher": "200-399",
+                "path": "/",
+                "port": "traffic-port",
+                "protocol": "HTTP",
+                "timeout": 5,
+                "unhealthy_threshold": 3
+              }
+            ],
+            "id": "arn:aws:elasticloadbalancing:ap-south-1:015932244669:targetgroup/conversations-tg/73569b355e4c8cb2",
+            "ip_address_type": "ipv4",
+            "lambda_multi_value_headers_enabled": false,
+            "load_balancer_arns": [
+              "arn:aws:elasticloadbalancing:ap-south-1:015932244669:loadbalancer/app/conversations-alb/b986dbbb8088f616"
+            ],
+            "load_balancing_algorithm_type": "round_robin",
+            "load_balancing_anomaly_mitigation": "off",
+            "load_balancing_cross_zone_enabled": "use_load_balancer_configuration",
+            "name": "conversations-tg",
+            "name_prefix": "",
+            "port": 8080,
+            "preserve_client_ip": null,
+            "protocol": "HTTP",
+            "protocol_version": "HTTP1",
+            "proxy_protocol_v2": false,
+            "slow_start": 0,
+            "stickiness": [
+              {
+                "cookie_duration": 86400,
+                "cookie_name": "",
+                "enabled": false,
+                "type": "lb_cookie"
+              }
+            ],
+            "tags": {
+              "Name": "conversations-tg"
+            },
+            "tags_all": {
+              "Name": "conversations-tg"
+            },
+            "target_failover": [
+              {
+                "on_deregistration": null,
+                "on_unhealthy": null
+              }
+            ],
+            "target_group_health": [
+              {
+                "dns_failover": [
+                  {
+                    "minimum_healthy_targets_count": "1",
+                    "minimum_healthy_targets_percentage": "off"
+                  }
+                ],
+                "unhealthy_state_routing": [
+                  {
+                    "minimum_healthy_targets_count": 1,
+                    "minimum_healthy_targets_percentage": "off"
+                  }
+                ]
+              }
+            ],
+            "target_health_state": [
+              {
+                "enable_unhealthy_connection_termination": null,
+                "unhealthy_draining_interval": null
+              }
+            ],
+            "target_type": "ip",
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_nat_gateway",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "allocation_id": "eipalloc-08829fcaaf62e5e1b",
+            "association_id": "eipassoc-0a6ec1bb601c21752",
+            "connectivity_type": "public",
+            "id": "nat-03dd54f4447fd56f4",
+            "network_interface_id": "eni-0e6ccb7fde48c3e70",
+            "private_ip": "10.0.1.170",
+            "public_ip": "3.111.255.3",
+            "secondary_allocation_ids": [],
+            "secondary_private_ip_address_count": 0,
+            "secondary_private_ip_addresses": [],
+            "subnet_id": "subnet-01d9f18fdcdb9dab5",
+            "tags": {
+              "Name": "conversations-nat"
+            },
+            "tags_all": {
+              "Name": "conversations-nat"
+            },
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTgwMDAwMDAwMDAwMCwidXBkYXRlIjo2MDAwMDAwMDAwMDB9fQ==",
+          "dependencies": [
+            "aws_eip.nat",
+            "aws_internet_gateway.main",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route_table",
+      "name": "private",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:route-table/rtb-0ecef077b1c4fd4fe",
+            "id": "rtb-0ecef077b1c4fd4fe",
+            "owner_id": "015932244669",
+            "propagating_vgws": [],
+            "route": [
+              {
+                "carrier_gateway_id": "",
+                "cidr_block": "0.0.0.0/0",
+                "core_network_arn": "",
+                "destination_prefix_list_id": "",
+                "egress_only_gateway_id": "",
+                "gateway_id": "",
+                "ipv6_cidr_block": "",
+                "local_gateway_id": "",
+                "nat_gateway_id": "nat-03dd54f4447fd56f4",
+                "network_interface_id": "",
+                "transit_gateway_id": "",
+                "vpc_endpoint_id": "",
+                "vpc_peering_connection_id": ""
+              }
+            ],
+            "tags": {
+              "Name": "conversations-private-rt"
+            },
+            "tags_all": {
+              "Name": "conversations-private-rt"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjEyMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_eip.nat",
+            "aws_internet_gateway.main",
+            "aws_nat_gateway.main",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route_table",
+      "name": "public",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:route-table/rtb-04f8d3b270388185a",
+            "id": "rtb-04f8d3b270388185a",
+            "owner_id": "015932244669",
+            "propagating_vgws": [],
+            "route": [
+              {
+                "carrier_gateway_id": "",
+                "cidr_block": "0.0.0.0/0",
+                "core_network_arn": "",
+                "destination_prefix_list_id": "",
+                "egress_only_gateway_id": "",
+                "gateway_id": "igw-04c614d183aa8bcbc",
+                "ipv6_cidr_block": "",
+                "local_gateway_id": "",
+                "nat_gateway_id": "",
+                "network_interface_id": "",
+                "transit_gateway_id": "",
+                "vpc_endpoint_id": "",
+                "vpc_peering_connection_id": ""
+              }
+            ],
+            "tags": {
+              "Name": "conversations-public-rt"
+            },
+            "tags_all": {
+              "Name": "conversations-public-rt"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjEyMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_internet_gateway.main",
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route_table_association",
+      "name": "private",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 0,
+          "attributes": {
+            "gateway_id": "",
+            "id": "rtbassoc-08ebc87744b1db5cd",
+            "route_table_id": "rtb-0ecef077b1c4fd4fe",
+            "subnet_id": "subnet-0718bdaf0d38f514d",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjEyMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_eip.nat",
+            "aws_internet_gateway.main",
+            "aws_nat_gateway.main",
+            "aws_route_table.private",
+            "aws_subnet.private",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        },
+        {
+          "index_key": 1,
+          "schema_version": 0,
+          "attributes": {
+            "gateway_id": "",
+            "id": "rtbassoc-0e4b30ca3ddedfe4b",
+            "route_table_id": "rtb-0ecef077b1c4fd4fe",
+            "subnet_id": "subnet-0e058662623b6cdf6",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjEyMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_eip.nat",
+            "aws_internet_gateway.main",
+            "aws_nat_gateway.main",
+            "aws_route_table.private",
+            "aws_subnet.private",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route_table_association",
+      "name": "public",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 0,
+          "attributes": {
+            "gateway_id": "",
+            "id": "rtbassoc-0099c26bffb204ad6",
+            "route_table_id": "rtb-04f8d3b270388185a",
+            "subnet_id": "subnet-01d9f18fdcdb9dab5",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjEyMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_internet_gateway.main",
+            "aws_route_table.public",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        },
+        {
+          "index_key": 1,
+          "schema_version": 0,
+          "attributes": {
+            "gateway_id": "",
+            "id": "rtbassoc-07ad2296fa060f7c6",
+            "route_table_id": "rtb-04f8d3b270388185a",
+            "subnet_id": "subnet-021dcfbd46deec846",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjEyMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_internet_gateway.main",
+            "aws_route_table.public",
+            "aws_subnet.public",
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "alb",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:security-group/sg-04a2ee8f0e0fd304e",
+            "description": "Security group for ALB",
+            "egress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 0,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "-1",
+                "security_groups": [],
+                "self": false,
+                "to_port": 0
+              }
+            ],
+            "id": "sg-04a2ee8f0e0fd304e",
+            "ingress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 443,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 443
+              },
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 80,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 80
+              }
+            ],
+            "name": "conversations-alb-sg",
+            "name_prefix": "",
+            "owner_id": "015932244669",
+            "revoke_rules_on_delete": false,
+            "tags": {
+              "Name": "conversations-alb-sg"
+            },
+            "tags_all": {
+              "Name": "conversations-alb-sg"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6OTAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "ecs",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:security-group/sg-05e23d2e071fdc5fe",
+            "description": "Security group for ECS tasks",
+            "egress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 0,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "-1",
+                "security_groups": [],
+                "self": false,
+                "to_port": 0
+              }
+            ],
+            "id": "sg-05e23d2e071fdc5fe",
+            "ingress": [
+              {
+                "cidr_blocks": [],
+                "description": "",
+                "from_port": 8080,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [
+                  "sg-04a2ee8f0e0fd304e"
+                ],
+                "self": false,
+                "to_port": 8080
+              }
+            ],
+            "name": "conversations-ecs-sg",
+            "name_prefix": "",
+            "owner_id": "015932244669",
+            "revoke_rules_on_delete": false,
+            "tags": {
+              "Name": "conversations-ecs-sg"
+            },
+            "tags_all": {
+              "Name": "conversations-ecs-sg"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6OTAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=",
+          "dependencies": [
+            "aws_security_group.alb",
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "rds",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:security-group/sg-0b0f44357274d483e",
+            "description": "Security group for RDS",
+            "egress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 0,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "-1",
+                "security_groups": [],
+                "self": false,
+                "to_port": 0
+              }
+            ],
+            "id": "sg-0b0f44357274d483e",
+            "ingress": [
+              {
+                "cidr_blocks": [],
+                "description": "",
+                "from_port": 3306,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [
+                  "sg-05e23d2e071fdc5fe"
+                ],
+                "self": false,
+                "to_port": 3306
+              }
+            ],
+            "name": "conversations-rds-sg",
+            "name_prefix": "",
+            "owner_id": "015932244669",
+            "revoke_rules_on_delete": false,
+            "tags": {
+              "Name": "conversations-rds-sg"
+            },
+            "tags_all": {
+              "Name": "conversations-rds-sg"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6OTAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=",
+          "dependencies": [
+            "aws_security_group.alb",
+            "aws_security_group.ecs",
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "private",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:subnet/subnet-0718bdaf0d38f514d",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "ap-south-1a",
+            "availability_zone_id": "aps1-az1",
+            "cidr_block": "10.0.10.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_lni_at_device_index": 0,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-0718bdaf0d38f514d",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": false,
+            "outpost_arn": "",
+            "owner_id": "015932244669",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "conversations-private-subnet-1"
+            },
+            "tags_all": {
+              "Name": "conversations-private-subnet-1"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        },
+        {
+          "index_key": 1,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:subnet/subnet-0e058662623b6cdf6",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "ap-south-1b",
+            "availability_zone_id": "aps1-az3",
+            "cidr_block": "10.0.11.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_lni_at_device_index": 0,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-0e058662623b6cdf6",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": false,
+            "outpost_arn": "",
+            "owner_id": "015932244669",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "conversations-private-subnet-2"
+            },
+            "tags_all": {
+              "Name": "conversations-private-subnet-2"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "public",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:subnet/subnet-01d9f18fdcdb9dab5",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "ap-south-1a",
+            "availability_zone_id": "aps1-az1",
+            "cidr_block": "10.0.1.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_lni_at_device_index": 0,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-01d9f18fdcdb9dab5",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": true,
+            "outpost_arn": "",
+            "owner_id": "015932244669",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "conversations-public-subnet-1"
+            },
+            "tags_all": {
+              "Name": "conversations-public-subnet-1"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        },
+        {
+          "index_key": 1,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:subnet/subnet-021dcfbd46deec846",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "ap-south-1b",
+            "availability_zone_id": "aps1-az3",
+            "cidr_block": "10.0.2.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_lni_at_device_index": 0,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-021dcfbd46deec846",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": true,
+            "outpost_arn": "",
+            "owner_id": "015932244669",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "conversations-public-subnet-2"
+            },
+            "tags_all": {
+              "Name": "conversations-public-subnet-2"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-0497e34c628d6222f"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "aws_vpc.main",
+            "data.aws_availability_zones.available"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:ap-south-1:015932244669:vpc/vpc-0497e34c628d6222f",
+            "assign_generated_ipv6_cidr_block": false,
+            "cidr_block": "10.0.0.0/16",
+            "default_network_acl_id": "acl-0cc1da1734d6576dd",
+            "default_route_table_id": "rtb-0d63f63da44e5a2bf",
+            "default_security_group_id": "sg-0f64f32d1d572200b",
+            "dhcp_options_id": "dopt-0890cc6c284bad7de",
+            "enable_dns_hostnames": true,
+            "enable_dns_support": true,
+            "enable_network_address_usage_metrics": false,
+            "id": "vpc-0497e34c628d6222f",
+            "instance_tenancy": "default",
+            "ipv4_ipam_pool_id": null,
+            "ipv4_netmask_length": null,
+            "ipv6_association_id": "",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_network_border_group": "",
+            "ipv6_ipam_pool_id": "",
+            "ipv6_netmask_length": 0,
+            "main_route_table_id": "rtb-0d63f63da44e5a2bf",
+            "owner_id": "015932244669",
+            "tags": {
+              "Name": "conversations-vpc"
+            },
+            "tags_all": {
+              "Name": "conversations-vpc"
+            }
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ=="
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
