@@ -1,93 +1,280 @@
-# aws_and_terraform_project
+# Deployment Guide for ECS Fargate with RDS
 
+## Prerequisites
 
+1. **AWS Account** with appropriate credentials
+2. **Terraform** installed (v1.0+)
+3. **AWS CLI** configured with credentials:
+   ```bash
+   aws configure
+   ```
+4. **Docker** installed (to build and push images)
+5. Spring Boot application built as JAR
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## Architecture Overview
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.kudelski.com/suhas.mirjikar/aws_and_terraform_project.git
-git branch -M main
-git push -uf origin main
+┌─────────────────────────────────────────────────┐
+│                    Internet                     │
+└──────────────────────┬──────────────────────────┘
+                       │
+        ┌──────────────▼──────────────┐
+        │  Application Load Balancer  │
+        │      (Public - Port 80)     │
+        └──────────────┬──────────────┘
+                       │
+        ┌──────────────▼──────────────┐
+        │   ECS Fargate Service       │
+        │  (1-2 tasks running)        │
+        │   Private Subnets           │
+        │   Port 8080                 │
+        └──────────────┬──────────────┘
+                       │
+        ┌──────────────▼──────────────┐
+        │  RDS MySQL Database         │
+        │  Private Subnet             │
+        │  Multi-AZ for HA            │
+        └─────────────────────────────┘
 ```
 
-## Integrate with your tools
+## Step-by-Step Deployment
 
-* [Set up project integrations](https://gitlab.kudelski.com/suhas.mirjikar/aws_and_terraform_project/-/settings/integrations)
+### 1. Build the Spring Boot Application
 
-## Collaborate with your team
+```bash
+cd conversations
+mvn clean package -DskipTests
+cd ..
+```
 
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### 2. Create Docker Image and Push to ECR
 
-## Test and Deploy
+```bash
+# Login to AWS ECR
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com
 
-Use the built-in continuous integration in GitLab.
+# Build the Docker image
+docker build -f terraform/Dockerfile -t conversations:latest .
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+# Tag the image for ECR
+docker tag conversations:latest <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/conversations:latest
 
-***
+# Push to ECR
+docker push <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/conversations:latest
+```
 
-# Editing this README
+**Note:** Replace `<ACCOUNT_ID>` with your AWS Account ID
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### 3. Configure Terraform Variables
 
-## Suggestions for a good README
+Edit `terraform/terraform.tfvars`:
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+```hcl
+aws_region = "us-east-1"
+db_password = "YourSecurePassword123!@#"  # IMPORTANT: Change this!
+ecs_desired_count = 2
+ecs_max_capacity = 4
+```
 
-## Name
-Choose a self-explaining name for your project.
+### 4. Initialize Terraform
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```bash
+cd terraform
+terraform init
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### 5. Review the Plan
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+```bash
+terraform plan
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Review the output to ensure all resources will be created as expected.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### 6. Apply the Terraform Configuration
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```bash
+terraform apply
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+When prompted, type `yes` to proceed.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+**Wait:** This will take 10-15 minutes as it:
+- Creates VPC, subnets, and networking
+- Sets up RDS database
+- Creates ECS cluster and service
+- Configures load balancer
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### 7. Get the Application URL
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+```bash
+terraform output alb_url
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+Visit this URL in your browser to access your application.
 
-## License
-For open source projects, say how it is licensed.
+## Testing the Application
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+After deployment is complete:
+
+### Test the GET endpoint:
+```bash
+curl http://<ALB_DNS>/conversations
+```
+
+### Test the POST endpoint with Postman:
+```
+POST http://<ALB_DNS>/conversations
+Content-Type: application/json
+
+{
+  "title": "Test Conversation",
+  "content": "This is a test from AWS"
+}
+```
+
+## Managing Your Deployment
+
+### View Logs
+```bash
+# Get logs from CloudWatch
+aws logs tail /ecs/conversations --follow
+```
+
+### Update the Application
+
+1. Build and push new Docker image:
+```bash
+docker build -f terraform/Dockerfile -t conversations:latest .
+docker tag conversations:latest <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/conversations:latest
+docker push <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/conversations:latest
+```
+
+2. Update ECS service to use new image:
+```bash
+aws ecs update-service \
+  --cluster conversations-cluster \
+  --service conversations-service \
+  --force-new-deployment \
+  --region us-east-1
+```
+
+### Scale the Application
+
+Edit `terraform/terraform.tfvars` and change:
+```hcl
+ecs_desired_count = 3  # Change the number of tasks
+```
+
+Then run:
+```bash
+terraform apply
+```
+
+### Monitor Performance
+
+View CloudWatch metrics:
+```bash
+aws cloudwatch list-metrics --namespace AWS/ECS
+```
+
+## Cost Optimization
+
+### Development Setup
+```hcl
+ecs_task_cpu     = "256"
+ecs_task_memory  = "512"
+ecs_desired_count = 1
+db_instance_class = "db.t3.micro"
+```
+
+### Production Setup
+```hcl
+ecs_task_cpu     = "1024"
+ecs_task_memory  = "2048"
+ecs_desired_count = 3
+db_instance_class = "db.t3.small"
+```
+
+## Cleanup (Delete Everything)
+
+**WARNING:** This will delete all resources including the database.
+
+```bash
+terraform destroy
+```
+
+Type `yes` when prompted.
+
+## Common Issues
+
+### Issue: ECR Repository Not Found
+**Solution:** Make sure the image is pushed to ECR before deploying:
+```bash
+aws ecr describe-repositories --repository-names conversations
+```
+
+### Issue: Tasks Keep Restarting
+**Solution:** Check the logs:
+```bash
+aws logs tail /ecs/conversations --follow
+```
+
+### Issue: Database Connection Failed
+**Solution:** Verify the security group allows access:
+```bash
+aws ec2 describe-security-groups --filters Name=tag:Name,Values=conversations-rds-sg
+```
+
+## Environment Variables
+
+The following environment variables are automatically configured by Terraform:
+
+```
+SPRING_DATASOURCE_URL=jdbc:mysql://rds-endpoint:3306/conversationsdb
+SPRING_DATASOURCE_USERNAME=admin
+SPRING_DATASOURCE_PASSWORD=<your-password>
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+```
+
+## Security Best Practices
+
+1. **Change Default Password:** Update `db_password` in terraform.tfvars
+2. **Use Secrets Manager:** Store sensitive data in AWS Secrets Manager
+3. **Enable HTTPS:** Add an SSL certificate to the load balancer
+4. **Restrict Access:** Update security groups to limit inbound traffic
+5. **Backup Database:** Enable automated backups (configured by default)
+6. **IAM Permissions:** Use least privilege IAM roles
+
+## Useful Commands
+
+```bash
+# Get application URL
+terraform output alb_url
+
+# Get ECR repository URL
+terraform output ecr_repository_url
+
+# Get RDS endpoint
+terraform output rds_endpoint
+
+# List all outputs
+terraform output
+
+# Destroy all resources
+terraform destroy
+
+# Validate Terraform configuration
+terraform validate
+
+# Format Terraform files
+terraform fmt -recursive
+```
+
+## Next Steps
+
+1. Add HTTPS/SSL certificate to ALB
+2. Set up custom domain with Route 53
+3. Configure CI/CD pipeline for automated deployments
+4. Set up monitoring and alerting
+5. Implement auto-scaling policies
